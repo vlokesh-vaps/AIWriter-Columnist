@@ -1,0 +1,148 @@
+# ═══════════════════════════════════════════════════════════════════════════
+# AI Newsroom Platform — Docker Compose Configuration
+# ═══════════════════════════════════════════════════════════════════════════
+# Phase 1: Three core microservices with shared LLM provider.
+# Start with: docker-compose up --build
+# ═══════════════════════════════════════════════════════════════════════════
+
+version: "3.9"
+
+services:
+  # ── Research Service ──────────────────────────────────────────────────
+  research-service:
+    build:
+      context: .
+      dockerfile: research_service/Dockerfile
+    container_name: newsroom-research
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./shared:/app/shared:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - newsroom-network
+
+  # ── AI Writer Service ────────────────────────────────────────────────
+  ai-writer-service:
+    build:
+      context: .
+      dockerfile: ai_writer_service/Dockerfile
+    container_name: newsroom-writer
+    ports:
+      - "8002:8002"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./shared:/app/shared:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - newsroom-network
+
+  # ── Fact-Check Service ───────────────────────────────────────────────
+  fact-check-service:
+    build:
+      context: .
+      dockerfile: fact_check_service/Dockerfile
+    container_name: newsroom-factcheck
+    ports:
+      - "8003:8003"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./shared:/app/shared:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - newsroom-network
+
+  # ── AI Columnist Service ──────────────────────────────────────────────
+  ai-columnist-service:
+    build:
+      context: .
+      dockerfile: ai_columnist_service/Dockerfile
+    container_name: newsroom-columnist
+    ports:
+      - "8005:8005"
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./shared:/app/shared:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8005/columnist/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    networks:
+      - newsroom-network
+
+  # ── Future Services (Phase 3+) ──────────────────────────────────────
+  # Uncomment when ready to integrate:
+
+  # postgres:
+  #   image: postgres:16-alpine
+  #   container_name: newsroom-postgres
+  #   environment:
+  #     POSTGRES_USER: newsroom
+  #     POSTGRES_PASSWORD: newsroom_secret
+  #     POSTGRES_DB: newsroom_db
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - newsroom-network
+
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: newsroom-redis
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - newsroom-network
+
+  # qdrant:
+  #   image: qdrant/qdrant:latest
+  #   container_name: newsroom-qdrant
+  #   ports:
+  #     - "6333:6333"
+  #   volumes:
+  #     - qdrant_data:/qdrant/storage
+  #   networks:
+  #     - newsroom-network
+
+networks:
+  newsroom-network:
+    driver: bridge
+
+# volumes:
+#   postgres_data:
+#   qdrant_data:
