@@ -1,34 +1,15 @@
-# ── Stage 1: Build ────────────────────────────────────────────────────────
-FROM python:3.11-slim AS builder
-
-WORKDIR /build
-
-# Install shared package first (for layer caching)
-COPY shared/ /build/shared/
-RUN pip install --no-cache-dir -e /build/shared/
-
-# Install service dependencies
-COPY fact-check-service/requirements.txt /build/requirements.txt
-RUN pip install --no-cache-dir -r /build/requirements.txt
-
-# ── Stage 2: Runtime ──────────────────────────────────────────────────────
 FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /app/fact_check_service
 
-# Copy installed packages from builder
-COPY --from=builder /usr/local/lib/python3.11/site-packages /usr/local/lib/python3.11/site-packages
-COPY --from=builder /usr/local/bin /usr/local/bin
-
-# Copy shared library
-COPY shared/ /app/shared/
-
-# Copy service code
-COPY fact-check-service/app/ /app/app/
-
-# Set Python path to include the shared library
-ENV PYTHONPATH="/app:${PYTHONPATH}"
 ENV PYTHONUNBUFFERED=1
+ENV PYTHONPATH=/app:/app/fact_check_service
+
+COPY fact_check_service/requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt
+
+COPY shared/ /app/shared/
+COPY fact_check_service/ /app/fact_check_service/
 
 EXPOSE 8003
 
