@@ -27,7 +27,7 @@ class Settings:
         # ── General ───────────────────────────────────────────────────
         self.ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
         self.LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
-        self.DEBUG: bool = os.getenv("DEBUG", "false").lower() in ("true", "1", "yes")
+        self.DEBUG: bool = os.getenv("DEBUG", "true").lower() in ("true", "1", "yes")
 
         # ── LLM Provider Selection ────────────────────────────────────
         self.LLM_PROVIDER: str = os.getenv("LLM_PROVIDER", "ollama")
