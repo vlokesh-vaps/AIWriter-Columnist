@@ -38,7 +38,7 @@ class Settings:
 
         # ── Groq ──────────────────────────────────────────────────────
         self.GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")
-        self.GROQ_MODEL: str = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+        self.GROQ_MODEL: str = os.getenv("GROQ_MODEL", "openai/gpt-oss-20b")
 
         # ── Gemini ────────────────────────────────────────────────────
         self.GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
