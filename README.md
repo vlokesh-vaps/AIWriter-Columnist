@@ -95,13 +95,13 @@ Press `Ctrl+C` to stop all services. If any service crashes, all others are auto
 
 ```bash
 # Build and start all services
-docker-compose up --build
+docker compose up --build
 
 # Run in background
-docker-compose up --build -d
+docker compose up --build -d
 
 # Stop all services
-docker-compose down
+docker compose down
 ```
 
 > **Note:** When running via Docker, set `OLLAMA_BASE_URL=http://host.docker.internal:11434` in your `.env`
