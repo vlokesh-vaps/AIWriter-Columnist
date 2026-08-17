@@ -1,1 +1,39 @@
 .env
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Python compiled files
+*.pyc
+*.pyo
+*.pyd# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test/cache
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
